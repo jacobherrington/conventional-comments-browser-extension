@@ -8,7 +8,7 @@ const commentTypes = {
   chore: {},
 };
 
-const injectContainer = () => {
+const injectContainers = () => {
   const commentFormHeaders = document.querySelectorAll(".js-comments-holder");
 
   commentFormHeaders.forEach((header) => {
@@ -21,11 +21,12 @@ const injectContainer = () => {
   });
 };
 
-const buildButton = (parent, key) => {
+const buildButton = (parent, key, isBlocking) => {
   const button = document.createElement("button");
-  button.classList.add("ccwe--button");
+  button.classList.add("ccwe--button", `ccwe--button-blocking-${isBlocking}`);
   button.textContent = key[0];
   button.dataset.type = key;
+  button.dataset.blocking = isBlocking;
   parent.appendChild(button);
 
   return button;
@@ -33,15 +34,17 @@ const buildButton = (parent, key) => {
 
 const injectContent = (container) => {
   Object.keys(commentTypes).forEach((key) => {
-    buildButton(container, key);
+    buildButton(container, key, true);
+    buildButton(container, key, false);
   });
 };
 
 const appendCommentTemplate = (e) => {
   let type = e.target.dataset.type;
+  let isBlocking = e.target.dataset.blocking;
   let textarea =
     e.target.parentElement.nextElementSibling.querySelector("textarea");
-  textarea.value = `**${type} (blocking):** ${textarea.value}`;
+  textarea.value = `**${type} (${isBlocking === 'true' ? 'blocking' : 'non-blocking'}):** ${textarea.value}`;
 };
 
 const updateEventListeners = () => {
@@ -52,7 +55,7 @@ const updateEventListeners = () => {
 };
 
 const main = () => {
-  injectContainer();
+  injectContainers();
   setTimeout(() => {
     updateEventListeners();
   }, 200);
