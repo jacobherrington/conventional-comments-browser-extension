@@ -37,9 +37,16 @@ const injectContainers = () => {
 
 const buildButton = (parent, key, isBlocking) => {
   const button = document.createElement("button");
-  const gitHubClasses = ['btn', 'ml-1', 'mb-1']
-  button.classList.add(...gitHubClasses, "ccwe--button", `ccwe--button-blocking-${isBlocking}`);
-  button.title = ``
+  const gitHubClasses = ["btn", "ml-1", "mb-1"];
+  button.classList.add(
+    ...gitHubClasses,
+    "ccwe--button",
+    `ccwe--button-blocking-${isBlocking}`
+  );
+  button.title = buildCommentTemplate(
+    { value: "..." },
+    { type: key, blocking: isBlocking }
+  );
   button.textContent = key[0];
   button.dataset.type = key;
   button.dataset.blocking = isBlocking;
@@ -52,7 +59,7 @@ const injectContent = (container) => {
   Object.keys(commentTypes).forEach((key) => {
     buildButton(container, key, false);
     if (commentTypes[key].canBlock === true) {
-        buildButton(container, key, true);
+      buildButton(container, key, true);
     }
   });
 };
@@ -64,8 +71,10 @@ const appendCommentTemplate = (e) => {
 };
 
 const buildCommentTemplate = (textarea, dataset) => {
-  return `**${dataset.type} (${dataset.blocking === 'true' ? 'blocking' : 'non-blocking'}):** ${textarea.value}`;
-}
+  return `**${dataset.type} (${
+    String(dataset.blocking) === "true" ? "blocking" : "non-blocking"
+  }):** ${textarea.value}`;
+};
 
 const updateEventListeners = () => {
   document.querySelectorAll(".ccwe--button").forEach((button) => {
