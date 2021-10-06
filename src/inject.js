@@ -21,15 +21,19 @@ const commentTypes = {
     canBlock: false,
   },
 };
+let lastInjectedContainer;
 
 const injectContainers = () => {
-  const commentFormHeaders = document.querySelectorAll(".js-comments-holder");
+  const commentFormHeaders = document.querySelectorAll(
+    "tbody:not(#js-inline-comments-single-container-template) div:not(.js-resolvable-thread-contents) > .js-comments-holder"
+  );
 
   commentFormHeaders.forEach((header) => {
     if (!header.nextElementSibling.classList.contains("ccwe--container")) {
       let container = document.createElement("div");
       container.classList.add("ccwe--container");
       header.after(container);
+      lastInjectedContainer = container;
       injectContent(container);
     }
   });
@@ -64,10 +68,18 @@ const injectContent = (container) => {
   });
 };
 
+const hotkeyEvent = (type, blocking) => {
+  return {
+    target: lastInjectedContainer.firstChild,
+    hotkeyEventDataset: { type: type, blocking: blocking },
+  };
+};
+
 const appendCommentTemplate = (e) => {
   const textarea =
     e.target.parentElement.nextElementSibling.querySelector("textarea");
-  textarea.value = buildCommentTemplate(textarea, e.target.dataset);
+  const dataset = e?.hotkeyEventDataset || e.target.dataset;
+  textarea.value = buildCommentTemplate(textarea, dataset);
 };
 
 const buildCommentTemplate = (textarea, dataset) => {
@@ -83,13 +95,49 @@ const updateEventListeners = () => {
   });
 };
 
+const blockingModifier = (e) => {
+  return !!e.shiftKey;
+};
+
+const captureHotkeys = (e) => {
+  if (e.altKey && e.ctrlKey) {
+    switch (e.keyCode) {
+      case 67: //c
+        appendCommentTemplate(hotkeyEvent("chore", blockingModifier(e)));
+        break;
+      case 73: //i
+        appendCommentTemplate(hotkeyEvent("issue", blockingModifier(e)));
+        break;
+      case 78: //n
+        appendCommentTemplate(hotkeyEvent("nitpick", blockingModifier(e)));
+        break;
+      case 80: //p
+        appendCommentTemplate(hotkeyEvent("praise", blockingModifier(e)));
+        break;
+      case 81: //q
+        appendCommentTemplate(hotkeyEvent("question", blockingModifier(e)));
+        break;
+      case 83: //s
+        appendCommentTemplate(hotkeyEvent("suggestion", blockingModifier(e)));
+        break;
+      case 84: // t
+        appendCommentTemplate(hotkeyEvent("thought", blockingModifier(e)));
+        break;
+    }
+  }
+};
+
 const main = () => {
-  injectContainers();
+  setTimeout(() => {
+    injectContainers();
+  }, 1);
   setTimeout(() => {
     updateEventListeners();
-  }, 50);
+  }, 10);
 };
 
 document.querySelectorAll(".js-add-line-comment").forEach((button) => {
   button.addEventListener("click", () => main(), true);
 });
+
+document.onkeydown = captureHotkeys;
