@@ -1,4 +1,6 @@
 (() => {
+  // For now, this is basically just a list of the comment types
+  // At some point it could contain extra info
   const commentTypes = {
     chore: {
       canBlock: true,
@@ -25,18 +27,20 @@
   let lastInjectedContainer;
 
   const injectContainers = () => {
+    // This selector is pretty brittle
     const commentFormHeaders = document.querySelectorAll(
       `tbody:not(#js-inline-comments-single-container-template) div:not(.js-resolvable-thread-contents) > .js-comments-holder,
     .SelectMenu-header`
     );
 
     commentFormHeaders.forEach((header) => {
+      // Skip headers that already have containers injected next to them
       if (!header.nextElementSibling.classList.contains("ccwe--container")) {
         let container = document.createElement("div");
         container.classList.add("ccwe--container");
         header.after(container);
         lastInjectedContainer = container;
-        injectContent(container);
+        injectButtons(container);
       }
     });
   };
@@ -62,7 +66,9 @@
     return button;
   };
 
-  const injectContent = (container) => {
+  // Makes buttons for each object in commentTypes
+  // Buttons that might used as blockers get a second button
+  const injectButtons = (container) => {
     Object.keys(commentTypes).forEach((key) => {
       buildButton(container, key, false);
       if (commentTypes[key].canBlock === true) {
@@ -71,6 +77,7 @@
     });
   };
 
+  // Tricking my own code
   const hotkeyEvent = (type, blocking) => {
     const target =
       document.querySelector(".details-overlay[open] .ccwe--container")
@@ -94,6 +101,7 @@
     }):** ${textarea.value}`;
   };
 
+  // Definitely the "least good" part of this project
   const updateEventListeners = () => {
     const container =
       document.querySelector(".details-overlay[open] .ccwe--container") ||
@@ -108,10 +116,13 @@
     });
   };
 
+  // Adding shift to the hotkey makes it a blocking comment
   const blockingModifier = (e) => {
     return !!e.shiftKey;
   };
 
+  // Handle hotkeys
+  // Right now it's just alt + ctrl + first letter of comment type
   const captureHotkeys = (e) => {
     if (e.altKey && e.ctrlKey) {
       switch (e.keyCode) {
@@ -140,6 +151,7 @@
     }
   };
 
+  // It'd be nice to get rid of the setTimeout() calls
   const main = () => {
     setTimeout(() => {
       injectContainers();
@@ -149,6 +161,7 @@
     }, 10);
   };
 
+  // Set event listeners
   document
     .querySelectorAll(".js-add-line-comment, .js-reviews-toggle")
     .forEach((button) => {

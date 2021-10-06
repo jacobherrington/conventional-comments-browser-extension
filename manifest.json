@@ -1,17 +1,19 @@
 {
-  "name": "Conventional comments browser extension",
-  "version": "0.0.1",
+  "name": "Conventional Comments",
+  "version": "0.1.0",
   "manifest_version": 2,
-  "description": "An extension for quickly writing conventional comments in GitHub",
+  "description": "An (unofficial) extension for writing conventional comments in GitHub (very quickly).",
   "homepage_url": "https://conventionalcomments.org/",
-  "icons": {},
+  "icons": {
+
+  },
   "default_locale": "en",
   "permissions": ["https://github.com/*"],
   "content_scripts": [
     {
-      "matches": ["https://github.com/*"],
-      "js": ["src/inject.js"],
-      "css": ["src/inject.css"],
+      "matches": ["*://github.com/*/files*"],
+      "js": ["src/main.js"],
+      "css": ["src/main.css"],
       "run_at": "document_idle"
     }
   ]
