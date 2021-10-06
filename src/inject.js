@@ -45,7 +45,8 @@ const buildButton = (parent, key, isBlocking) => {
   button.classList.add(
     ...gitHubClasses,
     "ccwe--button",
-    `ccwe--button-blocking-${isBlocking}`
+    `ccwe--button-blocking-${isBlocking}`,
+    "ccwe--animation-wave",
   );
   button.title = buildCommentTemplate(
     { value: "..." },
@@ -102,22 +103,22 @@ const blockingModifier = (e) => {
 const captureHotkeys = (e) => {
   if (e.altKey && e.ctrlKey) {
     switch (e.keyCode) {
-      case 67: //c
+      case 67: // c
         appendCommentTemplate(hotkeyEvent("chore", blockingModifier(e)));
         break;
-      case 73: //i
+      case 73: // i
         appendCommentTemplate(hotkeyEvent("issue", blockingModifier(e)));
         break;
-      case 78: //n
+      case 78: // n
         appendCommentTemplate(hotkeyEvent("nitpick", blockingModifier(e)));
         break;
-      case 80: //p
+      case 80: // p
         appendCommentTemplate(hotkeyEvent("praise", blockingModifier(e)));
         break;
-      case 81: //q
+      case 81: // q
         appendCommentTemplate(hotkeyEvent("question", blockingModifier(e)));
         break;
-      case 83: //s
+      case 83: // s
         appendCommentTemplate(hotkeyEvent("suggestion", blockingModifier(e)));
         break;
       case 84: // t
