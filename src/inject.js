@@ -94,10 +94,18 @@ const buildCommentTemplate = (textarea, dataset) => {
 };
 
 const updateEventListeners = () => {
-  document.querySelectorAll(".ccwe--button").forEach((button) => {
-    button.removeEventListener("click", (e) => appendCommentTemplate(e));
-    button.addEventListener("click", (e) => appendCommentTemplate(e));
-  });
+  const container =
+    document.querySelector(".details-overlay[open] .ccwe--container") ||
+    lastInjectedContainer;
+  let buttons = Array.prototype.filter.call(
+    container.querySelectorAll(".ccwe--button"),
+    (button) => !button.dataset.listening
+  );
+  buttons
+    .forEach((button) => {
+      button.addEventListener("click", (e) => appendCommentTemplate(e));
+      button.dataset.listening = true;
+    });
 };
 
 const blockingModifier = (e) => {
