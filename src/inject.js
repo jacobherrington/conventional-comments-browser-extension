@@ -1,11 +1,25 @@
 const commentTypes = {
-  praise: {},
-  nitpick: {},
-  suggestion: {},
-  issue: {},
-  question: {},
-  thought: {},
-  chore: {},
+  chore: {
+    canBlock: true,
+  },
+  issue: {
+    canBlock: true,
+  },
+  nitpick: {
+    canBlock: true,
+  },
+  praise: {
+    canBlock: false,
+  },
+  question: {
+    canBlock: true,
+  },
+  suggestion: {
+    canBlock: true,
+  },
+  thought: {
+    canBlock: false,
+  },
 };
 
 const injectContainers = () => {
@@ -23,7 +37,9 @@ const injectContainers = () => {
 
 const buildButton = (parent, key, isBlocking) => {
   const button = document.createElement("button");
-  button.classList.add("ccwe--button", `ccwe--button-blocking-${isBlocking}`);
+  const gitHubClasses = ['btn', 'ml-1', 'mb-1']
+  button.classList.add(...gitHubClasses, "ccwe--button", `ccwe--button-blocking-${isBlocking}`);
+  button.title = ``
   button.textContent = key[0];
   button.dataset.type = key;
   button.dataset.blocking = isBlocking;
@@ -34,18 +50,22 @@ const buildButton = (parent, key, isBlocking) => {
 
 const injectContent = (container) => {
   Object.keys(commentTypes).forEach((key) => {
-    buildButton(container, key, true);
     buildButton(container, key, false);
+    if (commentTypes[key].canBlock === true) {
+        buildButton(container, key, true);
+    }
   });
 };
 
 const appendCommentTemplate = (e) => {
-  let type = e.target.dataset.type;
-  let isBlocking = e.target.dataset.blocking;
-  let textarea =
+  const textarea =
     e.target.parentElement.nextElementSibling.querySelector("textarea");
-  textarea.value = `**${type} (${isBlocking === 'true' ? 'blocking' : 'non-blocking'}):** ${textarea.value}`;
+  textarea.value = buildCommentTemplate(textarea, e.target.dataset);
 };
+
+const buildCommentTemplate = (textarea, dataset) => {
+  return `**${dataset.type} (${dataset.blocking === 'true' ? 'blocking' : 'non-blocking'}):** ${textarea.value}`;
+}
 
 const updateEventListeners = () => {
   document.querySelectorAll(".ccwe--button").forEach((button) => {
@@ -58,7 +78,7 @@ const main = () => {
   injectContainers();
   setTimeout(() => {
     updateEventListeners();
-  }, 200);
+  }, 50);
 };
 
 document.querySelectorAll(".js-add-line-comment").forEach((button) => {
