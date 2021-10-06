@@ -25,7 +25,8 @@ let lastInjectedContainer;
 
 const injectContainers = () => {
   const commentFormHeaders = document.querySelectorAll(
-    "tbody:not(#js-inline-comments-single-container-template) div:not(.js-resolvable-thread-contents) > .js-comments-holder"
+    `tbody:not(#js-inline-comments-single-container-template) div:not(.js-resolvable-thread-contents) > .js-comments-holder,
+    .SelectMenu-header`
   );
 
   commentFormHeaders.forEach((header) => {
@@ -41,12 +42,12 @@ const injectContainers = () => {
 
 const buildButton = (parent, key, isBlocking) => {
   const button = document.createElement("button");
-  const gitHubClasses = ["btn", "ml-1", "mb-1"];
+  const gitHubClasses = ["btn", "ml-1", "my-1"];
   button.classList.add(
     ...gitHubClasses,
     "ccwe--button",
     `ccwe--button-blocking-${isBlocking}`,
-    "ccwe--animation-wave",
+    "ccwe--animation-wave"
   );
   button.title = buildCommentTemplate(
     { value: "..." },
@@ -70,8 +71,11 @@ const injectContent = (container) => {
 };
 
 const hotkeyEvent = (type, blocking) => {
+  const target =
+    document.querySelector(".details-overlay[open] .ccwe--container")
+      ?.firstChild || lastInjectedContainer.firstChild;
   return {
-    target: lastInjectedContainer.firstChild,
+    target: target,
     hotkeyEventDataset: { type: type, blocking: blocking },
   };
 };
@@ -137,8 +141,10 @@ const main = () => {
   }, 10);
 };
 
-document.querySelectorAll(".js-add-line-comment").forEach((button) => {
-  button.addEventListener("click", () => main(), true);
-});
+document
+  .querySelectorAll(".js-add-line-comment, .js-reviews-toggle")
+  .forEach((button) => {
+    button.addEventListener("click", () => main(), true);
+  });
 
 document.onkeydown = captureHotkeys;
