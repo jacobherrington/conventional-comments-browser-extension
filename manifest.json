@@ -11,7 +11,7 @@
   "permissions": ["https://github.com/*"],
   "content_scripts": [
     {
-      "matches": ["*://github.com/*/files*"],
+      "matches": ["*://github.com/*"],
       "js": ["src/main.js"],
       "css": ["src/main.css"],
       "run_at": "document_idle"
