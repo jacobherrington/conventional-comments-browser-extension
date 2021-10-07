@@ -1,4 +1,4 @@
-(() => {
+document.addEventListener("pjax:end", function () {
   // For now, this is basically just a list of the comment types
   // At some point it could contain extra info
   const commentTypes = {
@@ -169,4 +169,4 @@
     });
 
   document.onkeydown = captureHotkeys;
-})();
+});
