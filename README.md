@@ -4,7 +4,7 @@ This browser extension makes it wildly easy to adopt [Conventional Comments][cc]
 
 ### Installation
 
-This browser extension haven't been published to any of the official extension stores yet. Hence, you would have to download and install it manually.
+This browser extension hasn't been published to any of the official extension stores yet. So, you have to download and install it manually:
 
 1. Download the package from the Release page (`.zip` or `.tar.gz`)
 2. Extract it
