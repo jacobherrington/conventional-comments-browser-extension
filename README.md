@@ -4,7 +4,14 @@ This browser extension makes it wildly easy to adopt [Conventional Comments][cc]
 
 ### Installation
 
-* TODO
+This browser extension haven't been published to any of the official extension stores yet. Hence, you would have to download and install it manually.
+
+Here are the steps to do so.
+
+1. Download the package from Release page (`.zip` or `.tar.gz`)
+2. Extract it
+3. Go to Extensions page in your browser and enable Developer Mode
+4. Use "Load Unpacked" option to load the extracted code
 
 ### Usage
 
