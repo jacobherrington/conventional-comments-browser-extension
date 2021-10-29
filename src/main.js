@@ -42,15 +42,7 @@ const main = () => {
         });
     }
 
-    const targetNode = document.querySelector("#files");
-    const observerOptions = {
-        childList: true,
-        attributes: false,
-        subtree: true
-    }
-
-    const observer = new MutationObserver(respondToMutation);
-    observer.observe(targetNode, observerOptions);
+    /* Inject UI */
 
     const injectContainer = (target) => {
         let container = document.createElement("div");
@@ -100,7 +92,22 @@ const main = () => {
         });
     }
 
-    // Tricking my own code
+    /* Comment Templates */
+
+    const buildCommentTemplate = (textarea, dataset) => {
+        return `**${dataset.type} (${String(dataset.blocking) === "true" ? "blocking" : "non-blocking"
+            }):** ${textarea.value}`;
+    };
+
+    const appendCommentTemplate = (e) => {
+        const textarea =
+            e.target.parentElement.nextElementSibling.querySelector("textarea");
+        const dataset = e?.hotkeyEventDataset || e.target.dataset;
+        textarea.value = buildCommentTemplate(textarea, dataset);
+    };
+
+    /* Hotkeys */
+
     const hotkeyEvent = (type, blocking) => {
         const target =
             document.querySelector(".details-overlay[open] .ccbe--container")
@@ -111,24 +118,11 @@ const main = () => {
         };
     };
 
-    const appendCommentTemplate = (e) => {
-        const textarea =
-            e.target.parentElement.nextElementSibling.querySelector("textarea");
-        const dataset = e?.hotkeyEventDataset || e.target.dataset;
-        textarea.value = buildCommentTemplate(textarea, dataset);
-    };
-
-    const buildCommentTemplate = (textarea, dataset) => {
-        return `**${dataset.type} (${String(dataset.blocking) === "true" ? "blocking" : "non-blocking"
-            }):** ${textarea.value}`;
-    };
-    
-    // Adding shift to the hotkey makes it a blocking comment
+    // Adding shift gives the comment a "blocking" decoration
     const blockingModifier = (e) => {
         return !!e.shiftKey;
     };
 
-    // Handle hotkeys
     // Right now it's just alt + ctrl + first letter of comment type
     const captureHotkeys = (e) => {
         if (e.altKey && e.ctrlKey) {
@@ -158,6 +152,15 @@ const main = () => {
         }
     };
 
+    const targetNode = document.querySelector("#files");
+    const observerOptions = {
+        childList: true,
+        attributes: false,
+        subtree: true
+    }
+    const observer = new MutationObserver(respondToMutation);
+
+    observer.observe(targetNode, observerOptions);
     document.onkeydown = captureHotkeys;
 }
 
