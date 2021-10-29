@@ -35,9 +35,9 @@ document.addEventListener("pjax:end", function () {
 
     commentFormHeaders.forEach((header) => {
       // Skip headers that already have containers injected next to them
-      if (!header.nextElementSibling.classList.contains("ccwe--container")) {
+      if (!header.nextElementSibling.classList.contains("ccbe--container")) {
         let container = document.createElement("div");
-        container.classList.add("ccwe--container");
+        container.classList.add("ccbe--container");
         header.after(container);
         lastInjectedContainer = container;
         injectButtons(container);
@@ -50,9 +50,9 @@ document.addEventListener("pjax:end", function () {
     const gitHubClasses = ["btn", "ml-1", "my-1"];
     button.classList.add(
       ...gitHubClasses,
-      "ccwe--button",
-      `ccwe--button-blocking-${isBlocking}`,
-      "ccwe--animation-wave"
+      "ccbe--button",
+      `ccbe--button-blocking-${isBlocking}`,
+      "ccbe--animation-wave"
     );
     button.title = buildCommentTemplate(
       { value: "..." },
@@ -80,7 +80,7 @@ document.addEventListener("pjax:end", function () {
   // Tricking my own code
   const hotkeyEvent = (type, blocking) => {
     const target =
-      document.querySelector(".details-overlay[open] .ccwe--container")
+      document.querySelector(".details-overlay[open] .ccbe--container")
         ?.firstChild || lastInjectedContainer.firstChild;
     return {
       target: target,
@@ -104,10 +104,10 @@ document.addEventListener("pjax:end", function () {
   // Definitely the "least good" part of this project
   const updateEventListeners = () => {
     const container =
-      document.querySelector(".details-overlay[open] .ccwe--container") ||
+      document.querySelector(".details-overlay[open] .ccbe--container") ||
       lastInjectedContainer;
     let buttons = Array.prototype.filter.call(
-      container.querySelectorAll(".ccwe--button"),
+      container.querySelectorAll(".ccbe--button"),
       (button) => !button.dataset.listening
     );
     buttons.forEach((button) => {
