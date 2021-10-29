@@ -28,13 +28,14 @@ const main = () => {
 
     const lastInjectedContainer = () => lastInjectedCommentsContainer?.querySelector('div.js-line-comments .ccbe--container');
 
-    const setLastInjectedContainer = (mutationList, _observer) => {
+    const respondToMutation = (mutationList, _observer) => {
         mutationList.forEach((mutation) => {
             switch (mutation.type) {
                 case 'childList':
                     let nodes = mutation.addedNodes
                     if (nodes.length === 1 && nodes[0].classList.contains("js-inline-comments-container")) {
                         lastInjectedCommentsContainer = nodes[0];
+                        injectContainer(lastInjectedCommentsContainer.querySelector(".js-comments-holder"));
                     }
                     break;
             }
@@ -48,23 +49,22 @@ const main = () => {
         subtree: true
     }
 
-    const observer = new MutationObserver(setLastInjectedContainer)
+    const observer = new MutationObserver(respondToMutation);
     observer.observe(targetNode, observerOptions);
 
-    const injectContainers = () => {
-        // This selector is pretty brittle
-        const commentFormHeaders = document.querySelectorAll(
-            `tbody:not(#js-inline-comments-single-container-template) div:not(.js-resolvable-thread-contents) > .js-comments-holder,
-    .SelectMenu-header`
-        );
+    const injectContainer = (target) => {
+        let container = document.createElement("div");
+        container.classList.add("ccbe--container");
+        target.after(container);
+        injectButtons(container);
+        addEventListeners(container);
+    }
 
-        commentFormHeaders.forEach((header) => {
-            // Skip headers that already have containers injected next to them
-            if (!header.nextElementSibling.classList.contains("ccbe--container")) {
-                let container = document.createElement("div");
-                container.classList.add("ccbe--container");
-                header.after(container);
-                injectButtons(container);
+    const injectButtons = (container) => {
+        Object.keys(commentTypes).forEach((key) => {
+            buildButton(container, key, false);
+            if (commentTypes[key].canBlock === true) {
+                buildButton(container, key, true);
             }
         });
     };
@@ -90,16 +90,15 @@ const main = () => {
         return button;
     };
 
-    // Makes buttons for each object in commentTypes
-    // Buttons that might used as blockers get a second button
-    const injectButtons = (container) => {
-        Object.keys(commentTypes).forEach((key) => {
-            buildButton(container, key, false);
-            if (commentTypes[key].canBlock === true) {
-                buildButton(container, key, true);
-            }
+    const addEventListeners = (container) => {
+        Array.prototype.filter.call(
+            container.querySelectorAll(".ccbe--button"),
+            (button) => !button.dataset.listening
+        ).forEach((button) => {
+            button.addEventListener("click", (e) => appendCommentTemplate(e));
+            button.dataset.listening = true;
         });
-    };
+    }
 
     // Tricking my own code
     const hotkeyEvent = (type, blocking) => {
@@ -123,23 +122,7 @@ const main = () => {
         return `**${dataset.type} (${String(dataset.blocking) === "true" ? "blocking" : "non-blocking"
             }):** ${textarea.value}`;
     };
-
-    // Definitely the "least good" part of this project
-    const updateEventListeners = () => {
-        const container =
-            document.querySelector(".details-overlay[open] .ccbe--container") ||
-            lastInjectedContainer();
-        let buttons = Array.prototype.filter.call(
-            container.querySelectorAll(".ccbe--button"),
-            (button) => !button.dataset.listening
-        );
-
-        buttons.forEach((button) => {
-            button.addEventListener("click", (e) => appendCommentTemplate(e));
-            button.dataset.listening = true;
-        });
-    };
-
+    
     // Adding shift to the hotkey makes it a blocking comment
     const blockingModifier = (e) => {
         return !!e.shiftKey;
@@ -174,23 +157,6 @@ const main = () => {
             }
         }
     };
-
-    // It'd be nice to get rid of the setTimeout() calls
-    const initialize = () => {
-        setTimeout(() => {
-            injectContainers();
-        }, 1);
-        setTimeout(() => {
-            updateEventListeners();
-        }, 10);
-    };
-
-    // Set event listeners
-    document
-        .querySelectorAll(".js-add-line-comment, .js-reviews-toggle")
-        .forEach((button) => {
-            button.addEventListener("click", () => initialize(), true);
-        });
 
     document.onkeydown = captureHotkeys;
 }
