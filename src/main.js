@@ -160,11 +160,10 @@ const main = () => {
     }
     const observer = new MutationObserver(respondToMutation);
 
-    observer.observe(targetNode, observerOptions);
+    if (targetNode) observer.observe(targetNode, observerOptions);
     document.onkeydown = captureHotkeys;
 }
 
-if (/\/pull\//.test(window.location.pathname)) {
-    document.addEventListener("pjax:end", main);
-    document.addEventListener("DOMContentLoaded", main);
-}
+// This mostly works.
+document.addEventListener("DOMContentLoaded", main);
+document.addEventListener("pjax:end", main);
