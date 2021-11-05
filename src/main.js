@@ -162,6 +162,12 @@ const main = () => {
 
     if (targetNode) observer.observe(targetNode, observerOptions);
     document.onkeydown = captureHotkeys;
+
+    let reviewModalTarget = document.querySelector(".SelectMenu--hasFilter")?.children[0]?.children[0]
+    if (reviewModalTarget
+        && !reviewModalTarget?.nextElementSibling?.classList?.contains("ccbe--container")) {
+        injectContainer(reviewModalTarget);
+    }
 }
 
 // This mostly works.
