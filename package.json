@@ -1,0 +1,15 @@
+{
+  "name": "conventional-comments-browser-extension",
+  "version": "1.0.0",
+  "description": "This browser extension makes it wildly easy to adopt [Conventional Comments][cc] when working on GitHub.",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.0.0"
+  }
+}
